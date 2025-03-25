@@ -7,8 +7,11 @@ This model utilizes a UNet++ network as the generator and a pre-trained ResNet50
 <img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure2.png">
 
 ## Segmentation samples on the multi-parametric MRI dataset
+Segmentation samples on the multi-parametric MRI dataset, compared with ROIs from radiologists.
+
+<img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure3.png">
 
 ## Segmentation samples on the CT dataset
-This figure illustrates the segmentation results of CRLM-GAN on colorectal liver metastases(CRLM) images.
+Visualization results of segmentation in CT images, with CRLM tumors ranging from 1 to 4.
 
-<img width="387" alt="image" src="https://github.com/user-attachments/assets/b1774516-f71e-4e4c-ae39-dc6968cc8e2e" />
+<img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure4.png">
