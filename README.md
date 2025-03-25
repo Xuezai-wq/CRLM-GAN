@@ -4,7 +4,7 @@ CRLM-GAN introduces an innovative generative adversarial approach tailored for c
 ## Architecture of CRLM-GAN model 
 This model utilizes a UNet++ network as the generator and a pre-trained ResNet50 as the discriminator, incorporating multi-scale feature extraction. The network is trained by optimizing binary cross-entropy loss, Dice loss, and multi-feature constrained loss to enhance segmentation performance.
 
-<img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure2.tif">
+<img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure2.png">
 
 ## Segmentation samples on the multi-parametric MRI dataset
 
