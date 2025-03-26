@@ -24,7 +24,7 @@ import albumentations as albu
 import archs
 import losses
 from dataset import Dataset
-from metrics2 import *
+from metrics import *
 import utils
 from utils import AverageMeter, str2bool, gram
 from resnet501 import Resnet50
