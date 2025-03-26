@@ -27,7 +27,7 @@ from dataset import Dataset
 from metrics import *
 import utils
 from utils import AverageMeter, str2bool, gram
-from resnet501 import Resnet50
+from resnet50 import Resnet50
 
 
 import argparse
