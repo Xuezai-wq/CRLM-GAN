@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 import archs
 from dataset import Dataset
-from metrics2 import *
+from metrics import *
 from utils import AverageMeter
 import numpy as np
 from scipy import stats
