@@ -1,0 +1,1 @@
+Our implementation is based on the repository at https://github.com/4uiiurz1/pytorch-nested-unet. We sincerely thank the original authors for their valuable work. We have made some modifications and extensions to better fit the specific needs of our task, particularly adapting the code to integrate with our adversarial framework.
