@@ -376,16 +376,11 @@ else:
     raise NotImplementedError
 
 # Data loading code
-'''img_ids = glob(os.path.join('inputs', config['dataset'], 'training/images', '*' + config['img_ext']))
+img_ids = glob(os.path.join('inputs', config['dataset'], 'training/images', '*' + config['img_ext']))
 img_ids = [os.path.splitext(os.path.basename(p))[0] for p in img_ids]
 
-train_img_ids, val_img_ids = train_test_split(img_ids, test_size=0.2, random_state=41)'''
+train_img_ids, val_img_ids = train_test_split(img_ids, test_size=0.2, random_state=41)
 
-train_img_ids = glob(os.path.join('inputs', config['dataset'], 'training/images', '*' + config['img_ext']))
-train_img_ids = [os.path.splitext(os.path.basename(p))[0] for p in train_img_ids]
-    
-val_img_ids = glob(os.path.join('inputs', config['dataset'], 'testing/images', '*' + config['img_ext']))
-val_img_ids = [os.path.splitext(os.path.basename(p))[0] for p in val_img_ids]
 
 train_transform = Compose([
     # transforms.RandomRotate90(),
@@ -421,8 +416,8 @@ train_dataset = Dataset(
     transform=train_transform)
 val_dataset = Dataset(
     img_ids=val_img_ids,
-    img_dir=os.path.join('inputs', config['dataset'], 'testing/images'),
-    mask_dir=os.path.join('inputs', config['dataset'], 'testing/masks'),
+    img_dir=os.path.join('inputs', config['dataset'], 'training/images'),
+    mask_dir=os.path.join('inputs', config['dataset'], 'training/masks'),
     img_ext=config['img_ext'],
     mask_ext=config['mask_ext'],
     num_classes=config['num_classes'],
