@@ -173,23 +173,6 @@ def dice_loss(input,target):
     dice_total=1-1*torch.sum(dice)/dice.size(0)#divide by batchsize
     return  dice_total
 
-class TverskyLoss(nn.Module):
-
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, pred, target):
-        pred = pred.squeeze(dim=1)
-
-        smooth = 1
-
-        # dice系数的定义
-        dice = (pred * target).sum(dim=1).sum(dim=1).sum(dim=1) / ((pred * target).sum(dim=1).sum(dim=1).sum(dim=1) +
-                                                                   0.3 * (pred * (1 - target)).sum(dim=1).sum(
-                    dim=1).sum(dim=1) + 0.7 * ((1 - pred) * target).sum(dim=1).sum(dim=1).sum(dim=1) + smooth)
-
-        # 返回的是dice距离
-        return torch.clamp((1 - dice).mean(), 0, 2)
 
 
 
@@ -464,10 +447,6 @@ loss_mse = torch.nn.MSELoss()
 NetG.train()
 for epoch in range(config['epochs']):
 
-    aggregate_style_loss = 0.0
-    aggregate_content_loss = 0.0
-    aggregate_tv_loss = 0.0
-
     for i, data in enumerate(train_loader , 1):
         # train D
         NetD.zero_grad()
@@ -476,18 +455,14 @@ for epoch in range(config['epochs']):
             input = input.cuda()
             target = label.cuda()
 
-        # input= input.type(torch.FloatTensor)
-        # input = input.cuda()
-        # target = label.cuda()
+
         target = target.type(torch.FloatTensor)
         target = target.cuda()
         output = NetG(input).to(device)
-        # output = F.sigmoid(output*k)
-        # output = F.sigmoid(output)
-        # output = output.detach()
+    
         output_masked = input.clone()
         input_mask = input.clone()
-        #print(output.shape, output_masked.shape, input_mask.shape)
+
         # detach G from the network
 
         for d in range(3):
@@ -503,63 +478,10 @@ for epoch in range(config['epochs']):
             target_masked = target_masked.cuda()
         target_D = NetD(target_masked)
 
-
-        # img_count = 0
-
-
-
-
-
-        # get vgg features
-        y_hat=output
-        y_c_features = target_D
-        y_hat_features = result
-
-        # calculate style loss
-        # target_D_gram = [utils.gram(fmap) for fmap in y_c_features]
-        #
-        # y_hat_gram = [utils.gram(fmap) for fmap in y_hat_features]
-
-        target_D_ = [fmap for fmap in y_c_features]
-
-        y_hat_ = [fmap for fmap in y_hat_features]
-
-        style_loss = 0.0
-        for j in range(4):
-            style_loss += loss_mse(y_hat_[j], target_D_[j])
-        style_loss = STYLE_WEIGHT * style_loss
-        aggregate_style_loss += style_loss.item()
-
-        # calculate content loss (h_relu_2_2)
-        recon = y_c_features[1]
-        recon_hat = y_hat_features[1]
-        content_loss = CONTENT_WEIGHT * loss_mse(recon_hat, recon)
-        aggregate_content_loss += content_loss.item()
-
-        # calculate total variation regularization (anisotropic version)
-        # https://www.wikiwand.com/en/Total_variation_denoising
-        # diff_i = torch.sum(torch.abs(y_hat[:, :, :, 1:] - y_hat[:, :, :, :-1]))
-        # diff_j = torch.sum(torch.abs(y_hat[:, :, 1:, :] - y_hat[:, :, :-1, :]))
-        # tv_loss = TV_WEIGHT * (diff_i + diff_j)
-        # aggregate_tv_loss += tv_loss.item()
-
-
-        # total loss
-        # total_loss = style_loss + content_loss + tv_loss
-        # total_loss = style_loss + content_loss
-        # loss_D=total_loss
-        # loss_D.requires_grad_(True)
-        # # loss_D = - torch.mean(torch.abs(result - target_D))
-        # loss_D.backward()
-        # optimizerD.step()
-        # #clip parameters in D
-        # for p in NetD.parameters():
-        #     p.data.clamp_(-0.05, 0.05)
-
         #train G
         NetG.zero_grad()
         output = NetG(input)
-        # output = F.sigmoid(output)
+   
 
         for d in range(3):
             output_masked[:,d,:,:] = input_mask[:,d,:,:] * (output.squeeze(1))
@@ -585,17 +507,6 @@ for epoch in range(config['epochs']):
 
     print("===> Epoch[{}]({}/{}): Batch Dice: {:.4f}".format(epoch, i, len(train_loader), 1 - loss_dice.data))
     print("===> Epoch[{}]({}/{}): G_Loss: {:.4f}".format(epoch, i, len(train_loader), loss_G.data))
-    # print("===> Epoch[{}]({}/{}): D_Loss: {:.4f}".format(epoch, i, len(train_loader), loss_D.data))
-
-    #vutils.save_image(data[0],
-     #                 '%s/input.png' % config['outpath'],
-     #                 normalize=True)
-    # vutils.save_image(data[1],
-    #         '%s/label.png' % opt.outpath,
-    #         normalize=True)
-    #vutils.save_image(output.data,
-    #                  '%s/result.png' % config['outpath'],
-    #                  normalize=True)
 
     NetG.eval()
     IoUs, dices, sens, pres, F1s = [], [], [], [], [] 
@@ -605,15 +516,8 @@ for epoch in range(config['epochs']):
             input = input.cuda()
             gt = gt.cuda()
         pred = NetG(input)
-        # pred[pred < 0.5] = 0
-        # pred[pred >= 0.5] = 1
         pred = pred.type(torch.LongTensor)
-        # pred_np = pred.data.cpu().numpy()
-        # gt = gt.data.cpu().numpy()
         for x in range(input.size()[0]):
-            # IoU = np.sum(pred_np[x][gt[x] == 1]) / float(
-            #     np.sum(pred_np[x]) + np.sum(gt[x]) - np.sum(pred_np[x][gt[x] == 1]))
-            # dice = np.sum(pred_np[x][gt[x] == 1]) * 2 / float(np.sum(pred_np[x]) + np.sum(gt[x]))
             IoU = iou_score(pred[x], gt[x])
             dice = dice_coef(pred[x], gt[x])
             sen = get_sensitivity(pred[x], gt[x])
@@ -633,34 +537,14 @@ for epoch in range(config['epochs']):
             input = input.cuda()
             gt = gt.cuda()
         pred = NetG(input)
-        # pred[pred < 0.5] = 0
-        # pred[pred >= 0.5] = 1
         pred = pred.type(torch.LongTensor)
-        # pred_np = pred.data.cpu().numpy()
-        # gt = gt.data.cpu().numpy()
         for x in range(input.size()[0]):
             train_IoU=iou_score(pred[x],gt[x])
             train_dice=dice_coef(pred[x], gt[x])
-            #train_dice=(2*train_IoU)/(1+train_IoU)
-            # train_IoU = np.sum(pred_np[x][gt[x] == 1]) / float(
-            #     np.sum(pred_np[x]) + np.sum(gt[x]) - np.sum(pred_np[x][gt[x] == 1]))
-            # train_dice = np.sum(pred_np[x][gt[x] == 1]) * 2 / float(np.sum(pred_np[x]) + np.sum(gt[x]))
             train_IoUs.append(IoU)
             train_dices.append(dice)
 
 
-    # # train for one epoch
-    # train_log = train(config, train_loader, NetG, criterion, optimizer)
-    # # evaluate on validation set
-    # val_log = validate(config, val_loader, NetG , criterion)
-    #
-    # if config['scheduler'] == 'CosineAnnealingLR':
-    #     scheduler.step()
-    # elif config['scheduler'] == 'ReduceLROnPlateau':
-    #     scheduler.step(val_log['loss'])
-    #
-    # print('loss %.4f - iou %.4f - val_loss %.4f - val_iou %.4f'
-    #       % (train_log['loss'], train_log['iou'], val_log['loss'], val_log['iou']))
 
     NetG.train()
     train_IoUs = np.array(train_IoUs, dtype=np.float64)
@@ -685,11 +569,8 @@ for epoch in range(config['epochs']):
     print('mIoU: {:.4f}'.format(mIoU))
     print('Dice: {:.4f}'.format(mdice))
     log['epoch'].append(epoch)
-    # log['lr'].append(config['lr'])
-    # log['train_loss'].append(train_log['loss'])
     log['train_iou'].append(train_mIoU)
     log['train_dice'].append(train_mdice)
-    # log['D_Loss'].append(loss_D.data)
     log['val_iou'].append(mIoU)
     log['val_dice'].append(mdice)
     log['G_Loss'].append(loss_G.data)
@@ -705,114 +586,16 @@ for epoch in range(config['epochs']):
         best_sen = msen
         best_pre = mpre
         best_F1 = mF1
-        # torch.save(NetG.state_dict(), '%s/NetG_epoch_%d.pth' % (config['outpath'], epoch))
         torch.save(NetG.state_dict(), '%s/NetG_epoch_best.pth' % (config['outpath']))
-    #vutils.save_image(data[0],
-    #                  '%s/input_val.png' % config['outpath'],normalize=True)
-       
-    # vutils.save_image(data[1],
-    #         '%s/label_val.png' % opt.outpath,
-    #         normalize=True)
+ 
     pred = pred.type(torch.FloatTensor)
-    #vutils.save_image(pred.data,
-    #                  '%s/result_val.png' % config['outpath'],
-    #                  normalize=True)
+
 
 print('IoU: %.4f' % max_iou)
 print('Dice: %.4f' % best_dice)
 print('sensitivity: %.4f' % best_sen)
 print('precision: %.4f' % best_pre)
 print('F1: %.4f' % best_F1)
-# if epoch % 25 == 0:
-#     lr = lr * decay
-#     if lr <= 0.00000001:
-#         lr = 0.00000001
-#     print('Learning Rate: {:.6f}'.format(lr))
-#     # print('K: {:.4f}'.format(k))
-#     print('Max mIoU: {:.4f}'.format(max_iou))
-#     optimizerG = optim.Adam(NetS.parameters(), lr=lr, betas=(opt.beta1, 0.999))
-#     optimizerD = optim.Adam(NetC.parameters(), lr=lr, betas=(opt.beta1, 0.999))
-
-# # define loss function (criterion)
-# if config['loss'] == 'BCEWithLogitsLoss':
-#     criterion = nn.BCEWithLogitsLoss().cuda()
-# else:
-#     criterion = losses.__dict__[config['loss']]().cuda()
-#
-# cudnn.benchmark = True
-
-
-
-
-
-# create model
-
-
-# print("=> creating model %s" % config['arch'])
-# model = archs.__dict__[config['arch']](config['num_classes'],
-#                                        config['input_channels'],
-#                                        config['deep_supervision'])
-#
-# model = model.cuda()
-#
-# params = filter(lambda p: p.requires_grad, model.parameters())
-# if config['optimizer'] == 'Adam':
-#     optimizer = optim.Adam(
-#         params, lr=config['lr'], weight_decay=config['weight_decay'])
-# elif config['optimizer'] == 'SGD':
-#     optimizer = optim.SGD(params, lr=config['lr'], momentum=config['momentum'],
-#                           nesterov=config['nesterov'], weight_decay=config['weight_decay'])
-# else:
-#     raise NotImplementedError
-#
-
-
-#
-#
-# best_iou = 0
-# trigger = 0
-# for epoch in range(config['epochs']):
-#     print('Epoch [%d/%d]' % (epoch, config['epochs']))
-#
-#     # train for one epoch
-#     train_log = train(config, train_loader, NetG, criterion, optimizer)
-#     # evaluate on validation set
-#     val_log = validate(config, val_loader, NetG , criterion)
-#
-#     if config['scheduler'] == 'CosineAnnealingLR':
-#         scheduler.step()
-#     elif config['scheduler'] == 'ReduceLROnPlateau':
-#         scheduler.step(val_log['loss'])
-#
-#     print('loss %.4f - iou %.4f - val_loss %.4f - val_iou %.4f'
-#           % (train_log['loss'], train_log['iou'], val_log['loss'], val_log['iou']))
-#
-#     log['epoch'].append(epoch)
-#     log['lr'].append(config['lr'])
-#     log['loss'].append(train_log['loss'])
-#     log['iou'].append(train_log['iou'])
-#     log['val_loss'].append(val_log['loss'])
-#     log['val_iou'].append(val_log['iou'])
-#
-#     pd.DataFrame(log).to_csv('models/%s/log.csv' %
-#                              config['name'], index=False)
-#
-#     trigger += 1
-#
-#     if val_log['iou'] > best_iou:
-#         torch.save( NetG.state_dict(), 'models/%s/model.pth' %
-#                    config['name'])
-#         best_iou = val_log['iou']
-#         print("=> saved best model")
-#         trigger = 0
-#
-#     # early stopping
-#     if config['early_stopping'] >= 0 and trigger >= config['early_stopping']:
-#         print("=> early stopping")
-#         break
-#
-#     torch.cuda.empty_cache()
-
 
 # if __name__ == '__main__':
 #     main()
