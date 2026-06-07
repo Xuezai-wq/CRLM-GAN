@@ -17,7 +17,7 @@ Visualization results of segmentation in CT images, with CRLM tumors ranging fro
 
 <img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure4.png">
 
-## Citations
+## Related Citations
 ```
 @article{Isensee2021nnUNet,
   title = {nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation},
@@ -65,4 +65,18 @@ Visualization results of segmentation in CT images, with CRLM tumors ranging fro
   year      = {2015},
   doi       = {10.1007/978-3-319-24574-4_28}
 }
+```
+## Citation
+```
+@inproceedings{Xia2026CRLMGAN,
+  title     = {CRLM-GAN: a feature-constrained GAN-based deep learning framework for multi-parametric MRI-based segmentation of colorectal liver metastases before and after chemotherapy},
+  author    = {Xia, Shujie and Zhu, Huibin and Gu, Xiaolong and et al.},
+  booktitle = {Cancer Imaging},
+  series    = {Volume 26},
+  pages     = {10},
+  publisher = {Springer / BioMed Central},
+  year      = {2026},
+  doi       = {10.1186/s40644-025-00964-z}
+}
+
 ```
