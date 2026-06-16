@@ -17,66 +17,13 @@ Visualization results of segmentation in CT images, with CRLM tumors ranging fro
 
 <img src="https://github.com/Xuezai-wq/CRLM-GAN/blob/main/figure4.png">
 
-## Related Citations
-```
-@article{Isensee2021nnUNet,
-  title = {nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation},
-  author = {Isensee, Fabian and Jaeger, Paul F. and Kohl, Simon A. A. and Petersen, Jens and Maier-Hein, Klaus H.},
-  journal = {Nature Methods},
-  volume = {18},
-  number = {2},
-  pages = {203--211},
-  year = {2021},
-  doi = {10.1038/s41592-020-01008-z}
-}
-
-@article{Chen2021TransUNet,
-  title = {TransUNet: Transformers Make Strong Encoders for Medical Image Segmentation},
-  author = {Chen, Jieneng and Lu, Yongyi and Yu, Qihang and Luo, Xiangde and Adeli, Ehsan and Wang, Yan and … Yuille, Alan L.},
-  journal = {arXiv preprint arXiv:2102.04306},
-  year = {2021}
-}
-
-@article{Xue2018SegAN,
-  title = {SegAN: Adversarial Network with Multi-scale L₁ Loss for Medical Image Segmentation},
-  author = {Xue, Yuan and Xu, Tao and Zhang, Han and Long, L. Rodney and Huang, Xiaolei},
-  journal = {Neuroinformatics},
-  volume = {16},
-  number = {3-4},
-  pages = {383--392},
-  year = {2018},
-  doi = {10.1007/s12021-018-9377-x}
-}
-
-@article{Zhou2018UNetpp,
-  title = {UNet++: A Nested U-Net Architecture for Medical Image Segmentation},
-  author = {Zhou, Zongwei and Siddiquee, Md Mahfuzur Rahman and Tajbakhsh, Nima and Liang, Jianming},
-  journal = {arXiv preprint arXiv:1807.10165},
-  year = {2018}
-}
-@inproceedings{Ronneberger2015UNet,
-  title     = {U-Net: Convolutional Networks for Biomedical Image Segmentation},
-  author    = {Ronneberger, Olaf and Fischer, Philipp and Brox, Thomas},
-  booktitle = {Medical Image Computing and Computer-Assisted Intervention – MICCAI 2015},
-  series    = {Lecture Notes in Computer Science},
-  volume    = {9351},
-  pages     = {234--241},
-  publisher = {Springer, Cham},
-  year      = {2015},
-  doi       = {10.1007/978-3-319-24574-4_28}
-}
-```
 ## Citation
 ```
-@inproceedings{Xia2026CRLMGAN,
-  title     = {CRLM-GAN: a feature-constrained GAN-based deep learning framework for multi-parametric MRI-based segmentation of colorectal liver metastases before and after chemotherapy},
-  author    = {Xia, Shujie and Zhu, Huibin and Gu, Xiaolong and et al.},
-  booktitle = {Cancer Imaging},
-  series    = {Volume 26},
-  pages     = {10},
-  publisher = {Springer / BioMed Central},
-  year      = {2026},
-  doi       = {10.1186/s40644-025-00964-z}
+@article{xia2025crlm,
+  title={CRLM-GAN: a feature-constrained GAN-based deep learning framework for multi-parametric MRI-based segmentation of colorectal liver metastases before and after chemotherapy},
+  author={Xia, Shao-Jun and Zhu, Hai-Bin and Gu, Xiao-Lei and Bao, Jing and Sun, Anlan and Cui, Yong and Li, Xiao-Ting and Sun, Ying-Shi},
+  journal={Cancer Imaging},
+  year={2025},
+  publisher={Springer}
 }
-
 ```
